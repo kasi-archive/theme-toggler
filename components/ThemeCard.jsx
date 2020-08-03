@@ -1,7 +1,7 @@
 const { React, i18n: {Messages} } = require('powercord/webpack');
 const { Card, Tooltip, Switch } = require('powercord/components');
 
-const ThemeDetails = require('./ThemeDetails.jsx');
+const Details = require('../../pc-moduleManager/components/parts/Details');
 const Divider = require('powercord/components/Divider.jsx');
 
 module.exports = class ThemeCard extends React.PureComponent {
@@ -37,7 +37,7 @@ module.exports = class ThemeCard extends React.PureComponent {
         return(
             <>
                 <Divider />
-                <ThemeDetails
+                <Details
                     svgSize={24}
                     author={this.item.manifest.author}
                     version={this.item.manifest.version}
