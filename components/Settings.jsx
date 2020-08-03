@@ -1,7 +1,7 @@
 const { React, i18n: { Messages } } = require('powercord/webpack');
 const { Divider } = require('powercord/components');
 
-const ThemeCard = require('./ThemeCard');
+const InstalledProduct = require('../../pc-moduleManager/components/parts/InstalledProduct');
 
 module.exports = class ThemeTogglerSettings extends React.Component {
     constructor(props) {
@@ -33,8 +33,9 @@ module.exports = class ThemeTogglerSettings extends React.Component {
 
     renderItem(item) {
         return(
-            <ThemeCard
-                item={item}
+            <InstalledProduct
+                product={item.manifest}
+                isEnabled={item.applied}
                 onToggle={v => {
                     if(v) powercord.styleManager.enable(item.entityID);
                     else powercord.styleManager.disable(item.entityID);
