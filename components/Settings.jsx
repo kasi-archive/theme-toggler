@@ -1,5 +1,8 @@
-const { React, i18n: { Messages } } = require('powercord/webpack');
-const { Divider, Button } = require('powercord/components');
+const { React, contextMenu, i18n: { Messages } } = require('powercord/webpack');
+const { Divider, Button, ContextMenu, Icons: { Overflow } } = require('powercord/components');
+
+const { join } = require('path');
+const { shell } = require('electron');
 
 const InstalledProduct = require('../../pc-moduleManager/components/parts/InstalledProduct');
 
@@ -20,6 +23,7 @@ module.exports = class ThemeTogglerSettings extends React.Component {
                         <Button onClick={() => this.disableAll()} color={Button.Colors.RED} look={Button.Looks.FILLED} size={Button.Sizes.SMALL}>
                             {Messages.THEME_TOGGLER_DISABLE_ALL}
                         </Button>
+                        <Overflow onClick={e => this.openContextMenu(e)} onContextMenu={e => this.openContextMenu(e)} />
                     </div>
                 </div>
                 <Divider/>
@@ -60,5 +64,31 @@ module.exports = class ThemeTogglerSettings extends React.Component {
     disableAll() {
         powercord.styleManager.themes.forEach(theme =>
             powercord.styleManager.disable(theme.entityID));
+    }
+
+    openContextMenu(e) {
+        contextMenu.openContextMenu(e, () => 
+            React.createElement(ContextMenu, {
+                width: '50px',
+                itemGroups: [
+                    [
+                        {
+                            type: 'button',
+                            name: Messages['POWERCORD_THEMES_OPEN_FOLDER'],
+                            onClick: () => shell.openPath(join(__dirname, '..', '..', '..', 'themes'))
+                        },
+                        {
+                            type: 'button',
+                            name: Messages['POWERCORD_THEMES_LOAD_MISSING'],
+                            onClick: () => this.loadMissing()
+                        }
+                    ]
+                ]
+            })
+        )
+    }
+
+    loadMissing() {
+        powercord.pluginManager.get('pc-moduleManager')._fetchEntities('themes');
     }
 }
