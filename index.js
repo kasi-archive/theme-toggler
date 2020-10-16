@@ -6,7 +6,7 @@ const commands = require('./commands');
 
 module.exports = class ThemeToggler extends Plugin {
     startPlugin() {
-        Object.values(commands).forEach(cmd => powercord.api.commands.registerCommand(cmd));
+        this.registerMain()
         this.loadStylesheet('style.scss');
         powercord.api.i18n.loadAllStrings(i18n);
         powercord.api.settings.registerSettings('theme-toggler', {
@@ -18,6 +18,40 @@ module.exports = class ThemeToggler extends Plugin {
 
     pluginWillUnload() {
         powercord.api.settings.unregisterSettings('theme-toggler');
-        Object.values(commands).forEach(cmd => powercord.api.commands.unregisterCommand(cmd.command));
+        powercord.api.commands.unregisterCommand('theme');
+    }
+
+    registerMain() {
+        powercord.api.commands.registerCommand({
+            command: 'theme',
+            description: 'Enable and disable a theme.',
+            usage: '{c} [ enable, disable ] [ theme ID ]',
+            executor: (args) => {
+              const subcommand = commands[args[0]];
+              if (!subcommand) {
+                return {
+                  send: false,
+                  result: `\`${args[0]}\` is not a valid subcommand. Specify one of ${Object.keys(commands).map(cmd => `\`${cmd}\``).join(', ')}.`
+                };
+              }
+      
+              return subcommand.executor(args.slice(1), this);
+            },
+            autocomplete: (args) => {
+              if (args[0] !== void 0 && args.length === 1) {
+                return {
+                  commands: Object.values(commands).filter(({ command }) => command.includes(args[0].toLowerCase())),
+                  header: 'theme subcommands'
+                };
+              }
+      
+              const subcommand = commands[args[0]];
+              if (!subcommand || !subcommand.autocomplete) {
+                return false;
+              }
+      
+              return subcommand.autocomplete(args.slice(1), this.settings);
+            }
+          });
     }
 }
