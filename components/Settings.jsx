@@ -1,3 +1,4 @@
+/* eslint-disable */
 const { React, contextMenu, i18n: { Messages } } = require('powercord/webpack');
 const { Divider, Button, ContextMenu, Icons: { Overflow } } = require('powercord/components');
 
@@ -9,6 +10,9 @@ const InstalledProduct = require('../../pc-moduleManager/components/parts/Instal
 module.exports = class ThemeTogglerSettings extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            quickCSS: document.querySelector('#powercord-quickcss').disabled
+        }
     }
 
     render() {
@@ -17,16 +21,24 @@ module.exports = class ThemeTogglerSettings extends React.Component {
                 <div className='powercord-entities-manage-header'>
                     <span>{Messages[`POWERCORD_THEMES_INSTALLED`]}</span>
                     <div className='buttons theme-toggler-buttons'>
-                        <Button onClick={() => this.enableAll()} color={Button.Colors.GREEN} look={Button.Looks.FILLED} size={Button.Sizes.SMALL}>
+                        <Button onClick={() => this.enableAll()} color={Button.Colors.GREEN} look={Button.Looks.FILLED} size={Button.Sizes.MEDIUM}>
                             {Messages.THEME_TOGGLER_ENABLE_ALL}
                         </Button>
-                        <Button onClick={() => this.disableAll()} color={Button.Colors.RED} look={Button.Looks.FILLED} size={Button.Sizes.SMALL}>
+                        <Button onClick={() => this.disableAll()} color={Button.Colors.RED} look={Button.Looks.FILLED} size={Button.Sizes.MEDIUM}>
                             {Messages.THEME_TOGGLER_DISABLE_ALL}
                         </Button>
                         <Overflow onClick={e => this.openContextMenu(e)} onContextMenu={e => this.openContextMenu(e)} />
                     </div>
                 </div>
                 <Divider/>
+                <InstalledProduct
+                product={{ name: 'Quick CSS', description: 'The Quick CSS you have set.', version: 'Pog', license: 'OwO', author: 'You, cutie 💖' }}
+                isEnabled={!this.state.quickCSS}
+                onToggle={() => {
+                    this.setState({ quickCSS: !this.state.quickCSS });
+                    document.querySelector('#powercord-quickcss').disabled = !this.state.quickCSS;
+                } }
+                />
                 {this.renderBody()}
             </div>
         );
@@ -54,11 +66,6 @@ module.exports = class ThemeTogglerSettings extends React.Component {
                 }}
             />
         );
-    }
-
-    enableAll() {
-        powercord.styleManager.themes.forEach(theme =>
-            powercord.styleManager.enable(theme.entityID));
     }
 
     disableAll() {

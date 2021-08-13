@@ -1,24 +1,41 @@
 const { Plugin } = require('powercord/entities');
-
+const { inject, uninject } = require('powercord/injector');
 const Settings = require('./components/Settings.jsx');
+const ThemeMenu = require('../pc-moduleManager/components/manage/Themes.jsx');
+const { React } = require('powercord/webpack');
 const i18n = require('./i18n');
 const commands = require('./commands');
 
 module.exports = class ThemeToggler extends Plugin {
     startPlugin() {
-        this.registerMain()
+        this.registerMain();
         this.loadStylesheet('style.scss');
         powercord.api.i18n.loadAllStrings(i18n);
-        powercord.api.settings.registerSettings('theme-toggler', {
-            category: this.entityID,
-            label: 'Theme Toggler',
-            render: Settings
+        let extButton;
+        inject('theme-toggler-in-menu', ThemeMenu.prototype, 'render', (args, res) => {
+          try {
+            const settings = React.createElement(Settings);
+            extButton = res.props.children[1].props.children[0].props.children[1].props.children[0];
+            res.props.children[1].props.children[0] = null;
+            res.props.children[1].props.children[1] = null;
+            res.props.children[1].props.children[2] = settings;
+          }
+          catch {}
+          return res;
+        });
+        inject('theme-toggler-plus-store-button', Settings.prototype, 'render', (args, res) => {
+          const dots = res.props.children[0].props.children[1].props.children.pop();
+          res.props.children[0].props.children[1].props.children.push(extButton);
+          res.props.children[0].props.children[1].props.children.push(dots);
+          return res;
         });
     }
 
     pluginWillUnload() {
-        powercord.api.settings.unregisterSettings('theme-toggler');
         powercord.api.commands.unregisterCommand('theme');
+        uninject('quick-css-toggle-switch');
+        uninject('theme-toggler-in-menu');
+        uninject('theme-toggler-plus-store-button');
     }
 
     registerMain() {
