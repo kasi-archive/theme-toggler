@@ -1,4 +1,3 @@
-/* eslint-disable */
 const { React, contextMenu, i18n: { Messages } } = require('powercord/webpack');
 const { Divider, Button, ContextMenu, Icons: { Overflow } } = require('powercord/components');
 
