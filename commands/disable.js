@@ -4,15 +4,16 @@ module.exports = {
     usage: '{c} [ theme ID ]',
     executor (args) {
       let result;
+      const themeID = powercord.styleManager.getThemes().find(theme => theme.toLowerCase() === args[0].toLowerCase());
   
-      if (powercord.styleManager.themes.has(args[0])) {
-        if (!powercord.styleManager.isEnabled(args[0])) {
+      if (powercord.styleManager.themes.has(themeID)) {
+        if (!powercord.styleManager.isEnabled(themeID)) {
           result = `->> ERROR: Tried to disable an already disabled theme!
-              (${args[0]})`;
+              (${themeID})`;
         } else {
-          powercord.styleManager.disable(args[0]);
+          powercord.styleManager.disable(themeID);
           result = `+>> SUCCESS: Theme un-loaded!
-              (${args[0]})`;
+              (${themeID})`;
         }
       } else {
         result = `->> ERROR: Tried to disbale a non-installed theme!
@@ -35,7 +36,7 @@ module.exports = {
   
       return {
         commands: themes
-          .filter(theme => theme.entityID.includes(args[0]))
+          .filter(theme => theme.entityID.toLowerCase().includes(args[0].toLowerCase()))
           .map(theme => ({
             command: theme.entityID,
             description: theme.manifest.description
