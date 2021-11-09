@@ -7,7 +7,7 @@ const commands = require('./commands');
 module.exports = class ThemeToggler extends Plugin {
     startPlugin() {
         this.registerMain()
-        this.loadStylesheet('style.scss');
+        this.loadStylesheet('style.css');
         powercord.api.i18n.loadAllStrings(i18n);
         powercord.api.settings.registerSettings('theme-toggler', {
             category: this.entityID,
