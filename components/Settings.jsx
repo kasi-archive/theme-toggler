@@ -12,7 +12,7 @@ module.exports = class ThemeTogglerSettings extends React.Component {
   }
 
   render() {
-    return(
+    return (
       <div className='powercord-entities-manage powercord-text'>
         <div className='powercord-entities-manage-header'>
           <span>{Messages[`POWERCORD_THEMES_INSTALLED`]}</span>
@@ -26,17 +26,17 @@ module.exports = class ThemeTogglerSettings extends React.Component {
             <Overflow onClick={e => this.openContextMenu(e)} onContextMenu={e => this.openContextMenu(e)} />
           </div>
         </div>
-        <Divider/>
+        <Divider />
         {this.renderBody()}
       </div>
     );
   }
 
-  renderBody () {
+  renderBody() {
     const items = [];
     powercord.styleManager.themes.forEach(theme => items.push(this.renderItem(theme)));
 
-    return(
+    return (
       <div className='powercord-entities-manage-items'>
         {items}
       </div>
@@ -44,12 +44,12 @@ module.exports = class ThemeTogglerSettings extends React.Component {
   }
 
   renderItem(item) {
-    return(
+    return (
       <InstalledProduct
         product={item.manifest}
         isEnabled={item.applied}
         onToggle={v => {
-          if(v) powercord.styleManager.enable(item.entityID);
+          if (v) powercord.styleManager.enable(item.entityID);
           else powercord.styleManager.disable(item.entityID);
         }}
       />
@@ -58,16 +58,16 @@ module.exports = class ThemeTogglerSettings extends React.Component {
 
   enableAll() {
     powercord.styleManager.themes.forEach(theme =>
-    powercord.styleManager.enable(theme.entityID));
+      powercord.styleManager.enable(theme.entityID));
   }
 
   disableAll() {
     powercord.styleManager.themes.forEach(theme =>
-    powercord.styleManager.disable(theme.entityID));
+      powercord.styleManager.disable(theme.entityID));
   }
 
   openContextMenu(e) {
-    contextMenu.openContextMenu(e, () => 
+    contextMenu.openContextMenu(e, () =>
       React.createElement(ContextMenu, {
         width: '50px',
         itemGroups: [
@@ -81,6 +81,12 @@ module.exports = class ThemeTogglerSettings extends React.Component {
               type: 'button',
               name: Messages['POWERCORD_THEMES_LOAD_MISSING'],
               onClick: () => this.loadMissing()
+            },
+            {
+              type: 'checkbox',
+              name: Messages['THEME_TOGGLER_INTEGRATE_TOGGLE'],
+              defaultState: this.props.getSetting('integrate', false),
+              onToggle: (state) => this.props.updateSetting('integrate', state)
             }
           ]
         ]

@@ -1,8 +1,13 @@
 const { Plugin } = require('powercord/entities');
+const { inject, uninject } = require('powercord/injector');
+const { React } = require('powercord/webpack');
 
-const Settings = require('./components/Settings.jsx');
+const Settings = require('./components/Settings');
 const i18n = require('./i18n');
 const commands = require('./commands');
+
+const Base = require('../pc-moduleManager/components/manage/Base');
+const Themes = require('../pc-moduleManager/components/manage/Themes');
 
 module.exports = class ThemeToggler extends Plugin {
     startPlugin() {
@@ -14,11 +19,24 @@ module.exports = class ThemeToggler extends Plugin {
             label: 'Theme Toggler',
             render: Settings
         });
+
+        const _this = this;
+        inject('tt-base-render', Base.prototype, 'render', function(_, res) {
+          return this.state.key === 'THEMES' && _this.settings.get('integrate', false) ? this.renderBody() : res;
+        });
+
+        // powercord.api.settings.tabs[_this.entityID].render is the settings page connected to the flux decorator for this plugin
+        inject('tt-themes-body', Themes.prototype, 'renderBody', function(_, res) {
+          return _this.settings.get('integrate', false) ? React.createElement(powercord.api.settings.tabs[_this.entityID].render) : res;
+        });
     }
 
     pluginWillUnload() {
         powercord.api.settings.unregisterSettings('theme-toggler');
         powercord.api.commands.unregisterCommand('theme');
+
+        uninject('tt-base-render');
+        uninject('tt-themes-body');
     }
 
     registerMain() {

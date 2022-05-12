@@ -1,4 +1,5 @@
 {
   "THEME_TOGGLER_ENABLE_ALL": "Alle aktivieren",
-  "THEME_TOGGLER_DISABLE_ALL": "Alle deaktivieren"
+  "THEME_TOGGLER_DISABLE_ALL": "Alle deaktivieren",
+  "THEME_TOGGLER_INTEGRATE_TOGGLE": "Integrate into \"Themes\""
 }
